@@ -1,0 +1,71 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Get libraries",
+            "type": "shell",
+            "command": "make getlibs",
+            "group": "build",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/Dual-CPU_Empty_PSoC6_App_1"
+            },
+        },
+        {
+            "label": "Clean",
+            "type": "shell",
+            "command": "make clean",
+            "group": "build",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/Dual-CPU_Empty_PSoC6_App_1"
+            },
+        },
+        {
+            "label": "Erase",
+            "type": "shell",
+            "command": "make erase",
+            "group": "build",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/Dual-CPU_Empty_PSoC6_App_1/proj_cm0p"
+            },
+        },
+        {
+            "label": "Build & flash (CM0+)",
+            "type": "shell",
+            "command": "make program_proj -j",
+            "group": "build",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/Dual-CPU_Empty_PSoC6_App_1/proj_cm0p"
+            },
+        },
+        {
+            "label": "Build & flash (CM4)",
+            "type": "shell",
+            "command": "make program_proj -j",
+            "group": "build",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/Dual-CPU_Empty_PSoC6_App_1/proj_cm4"
+            },
+        },
+        {
+            "label": "Run all (no upgrade)",
+            "detail": "Full build and flash of both micros. Does not perform an upgrade build on the CM4 micro.",
+            "dependsOn": [
+                "Get libraries",
+                "Clean",
+                "Erase",
+                "Build & flash (bootloader)",
+                "Build & flash (blinky app, BOOT configuration)"
+            ],
+            "dependsOrder": "sequence",
+            "group": "build",
+            "problemMatcher": []
+        }
+    ]
+}
