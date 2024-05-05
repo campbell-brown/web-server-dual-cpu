@@ -54,14 +54,14 @@
             },
         },
         {
-            "label": "Run all (no upgrade)",
-            "detail": "Full build and flash of both micros. Does not perform an upgrade build on the CM4 micro.",
+            "label": "Run all",
+            "detail": "Full build and flash of both micros.",
             "dependsOn": [
                 "Get libraries",
                 "Clean",
                 "Erase",
-                "Build & flash (bootloader)",
-                "Build & flash (blinky app, BOOT configuration)"
+                "Build & flash (CM0+)",
+                "Build & flash (CM4)",
             ],
             "dependsOrder": "sequence",
             "group": "build",
