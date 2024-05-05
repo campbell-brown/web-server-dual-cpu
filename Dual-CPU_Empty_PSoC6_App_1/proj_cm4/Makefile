@@ -43,6 +43,10 @@ VERBOSE=
 # Advanced Configuration
 ################################################################################
 
+# Uncomment below DEFINES if you may use TFT feature on one of those boards:
+# CY8CKIT-062-WIFI-BT, CYW9P62S1-43438EVB-01, CY8CKIT-062S2-43012.
+# DEFINES+=ENABLE_TFT
+
 # Enable optional code that is ordinarily disabled by default.
 #
 # Available components depend on the specific targeted hardware and firmware
@@ -53,7 +57,15 @@ VERBOSE=
 # ... then code in directories named COMPONENT_foo and COMPONENT_bar will be
 # added to the build
 #
-COMPONENTS=
+COMPONENTS=FREERTOS LWIP MBEDTLS SECURE_SOCKETS
+
+ifeq ($(DEFINES), ENABLE_TFT)
+# Enable EMWIN_OSNTS component if TFT feature is enabled (ENABLE_TFT)
+    COMPONENTS+=EMWIN_OSNTS
+else
+# Ignore SEARCH_CY8CKIT-028-TFT if ENABLE_TFT is disabled
+    CY_IGNORE+=$(SEARCH_CY8CKIT-028-TFT)
+endif
 
 # Like COMPONENTS, but disable optional code that was enabled by default.
 DISABLE_COMPONENTS=CM0P_SLEEP CM0P_SECURE CM0P_CRYPTO CM0P_BLESS
@@ -71,8 +83,14 @@ SOURCES=
 # directories (without a leading -I).
 INCLUDES=
 
+# Custom configuration of mbedtls library.
+MBEDTLSFLAGS = MBEDTLS_USER_CONFIG_FILE='"mbedtls_user_config.h"'
+
 # Add additional defines to the build process (without a leading -D).
-DEFINES=
+DEFINES+=$(MBEDTLSFLAGS) CYBSP_WIFI_CAPABLE CY_RETARGET_IO_CONVERT_LF_TO_CRLF CY_RTOS_AWARE
+
+DEFINES+=ENABLE_HTTP_SERVER_LOGS
+DEFINES+=MAX_NUMBER_OF_HTTP_SERVER_RESOURCES=10
 
 # Select softfp or hardfp floating point. Default is softfp.
 VFP_SELECT=
@@ -81,7 +99,10 @@ VFP_SELECT=
 #
 # NOTE: Includes and defines should use the INCLUDES and DEFINES variable
 # above.
-CFLAGS=
+ifeq ($(TOOLCHAIN),IAR)
+# Enable support for variable length arrays in IAR compiler.
+CFLAGS+=--vla
+endif
 
 # Additional / custom C++ compiler flags.
 #
@@ -110,6 +131,8 @@ PREBUILD=
 # Custom post-build commands to run.
 POSTBUILD=
 
+# To change the default policy
+CY_SECURE_POLICY_NAME=policy_single_CM0_CM4_smif_swap
 
 ################################################################################
 # Paths
